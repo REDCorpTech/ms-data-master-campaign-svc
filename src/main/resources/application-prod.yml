@@ -1,0 +1,93 @@
+server:
+  servlet:
+    context-path: /ms-data-master-distribution/api/v1
+  port: 8083
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: ms-data-master-account
+  datasource:
+    url: jdbc:postgresql://sequrra-postgres-prod.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrra
+    username: sequrra_root
+    password: g9fpiEpET9AAXC8kQygE
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 10
+      idle-timeout: 300000
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    url: jdbc:postgresql://sequrra-postgres-prod.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrra
+    user: sequrra_root
+    password: g9fpiEpET9AAXC8kQygE
+    baseline-on-migrate: true
+    enabled: true
+    validate-on-migrate: true
+    baseline-version: 1.1
+    locations: classpath:db/migration
+    out-of-order: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  # Security
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 140965361707-ggcluflva9ma8qgjf1ko0kl9a41o006a.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+common:
+  pageable:
+    size: 100
+    page: 0
+  sorting: ASC
+
+security:
+  jwt:
+
+
+
+#oss:
+#  endpoint: https://ap-south-1.linodeobjects.com
+#  secret-key: Tcoz4fHXQVpctEm4mLApofuua9GkmUHhPYpYS6DB
+#  access-key: 5Q6I158TPIDBOLAAB2V0
+#  bucket: ugks-oss
+
+#endpoint-configuration
+endpoint:
+  authentication:
+    base: /authentication
+    signup: /signup
+    login: /login
+    refresh-token: /refresh-token
+    forgot-password: /forgot-password
+    reset-password: /reset-password
+    oauth-google: /oauth-google
+
+
+#kafka:
+#  producer:
+#    bootstrap-servers: 139.162.36.148:9093
+#    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#  topics:
+#      - name: account.auth.events
+#        num-partitions: 3
+#        replication-factor: 1

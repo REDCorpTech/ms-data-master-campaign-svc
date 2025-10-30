@@ -1,0 +1,20 @@
+61c78d15-9494-47b7-b35f-afc2a5f9c73b,pau pau,pau,pau,,,renrankunzen@gmail.com,,$2a$10$D1FaeHRDmnH443ajG99Zhu1.3yKYsF/9iCcAWYfB12FiEyw5Be2US,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+5d261975-0240-492b-981e-3ed5c7dc16fa,memew memew,memew,memew,,,paumew01@gmail.com,,$2a$10$w9mPQO5x98fPDxd1VI/71.XdoNPlUhCS9MUSFvVncLuC9FRnUieia,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+6f82964d-0a51-4b09-8a64-5d05e2603d70,Andryan pau,Andryan,pau,,,paumew02@gmail.com,,$2a$10$qL0WvYMSlu/HGxlKGAOzCuAcoyMraREH6HIkffErt0xpkZAFIEbGm,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+67b7327d-ce10-4569-b22d-20ba64a4b208,Pau Pau,Pau,Pau,,,ancients3011@gmail.com,,$2a$10$m.KL2H0MDbIZ2p6NKS/C.eULevvO7b4s74WyRqlWBRz/H.rrr6UBa,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+39eacb4c-c0c6-43f1-9445-1e65d127bfbe,christianto lie,christianto,lie,,,christiantolie99@gmail.com,,$2a$10$zRUjEoY/34ycu3iPpiRAj.6t1RTErjtlCEL384fx4jX7G2SrwA2o.,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+0f02acbc-cea1-401e-aebf-5e028ae543c5,Dennis Fernando Giovanni,Dennis,Fernando Giovanni,,,dennisfgiovanni@gmail.com,,$2a$10$A/LywsQbdNrB3MrcyvekOeVnXxX0IOtCMNu6pcbxcrC.vGm.p0szW,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+87b56df7-5828-4493-b22b-7645ba5af3ef,Dwicahyo H.P. Hidayat,Dwicahyo H.P.,Hidayat,,,dwicahyo.herlambang@akarinti.tech,,$2a$10$zjkdRm1LttULSbmn3su0FOkGyPmbB1URSc5GzkTti6L6sAmtHfzz6,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+7cefca4a-8bef-4224-91f0-ebfcd0d9d7c4,Dennis Giovanni,Dennis,Giovanni,,,dennis@sequrra.com,,$2a$10$C6ZT0/RFO/zoUZgCdJrlZun0rMRWFf4CkP.ggFJpFmXdw2dX7OFYK,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+6251e0b7-350b-4ae8-893d-a6a3a6d3aca1,Rinderson Matthew,Rinderson,Matthew,,,rinderson@sequrra.com,,$2a$10$pjBuoxVRyZWC2Qn/x148weR3JhW5Xiq8AWoW1C8SuxDkDTsNnA4BG,00000000,,,,,,,c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,,,,,,,
+
+
+t-acct_type
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3a5,CUSTOMER,Super Admin,1,ACTIVE,system,2024-11-24 22:39:16.000000,,,,
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3a4,SUPPLIER,Admin,1,ACTIVE,system,2024-11-24 22:39:18.000000,,,,
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3a3,CORPORATE,User,1,ACTIVE,system,2024-11-24 22:39:19.000000,,,,
+
+t-roles
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3c5,SUPER_ADMIN,Super Admin,1,ACTIVE,system,2024-11-24 22:39:16.000000,,,,
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3c4,ADMIN,Admin,1,ACTIVE,system,2024-11-24 22:39:18.000000,,,,
+c4f8ac9a-8f87-4a67-9b79-70c3b944f3c3,USER,User,1,ACTIVE,system,2024-11-24 22:39:19.000000,,,,
