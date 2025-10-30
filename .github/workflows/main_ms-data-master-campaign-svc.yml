@@ -1,0 +1,68 @@
+name: main_ms-data-master-campaign-svc
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: sequrradev
+
+    steps:
+
+      - name: Extract branch name and set environment variables
+        if: steps.check-commit.outputs.run_build == 'true'
+        id: extract_branch
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "::set-output name=branch::$(echo ${GITHUB_HEAD_REF} | sed 's/\//-/g')"
+          else
+            echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')"
+          fi
+          echo 'PYTHONIOENCODING=utf-8' >> $GITHUB_ENV
+
+      - name: Checkout repository
+        if: steps.check-commit.outputs.run_build == 'true'
+        uses: actions/checkout@v2
+        with:
+          path: "./${{ steps.extract_branch.outputs.branch }}"
+
+      - name: Login to AWS ECR
+        if: steps.check-commit.outputs.run_build == 'true'
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+      
+      - name: Modifying Manifest files and Deploy Application
+        if: steps.check-commit.outputs.run_build == 'true'
+        run: |
+          registryUrl=${{ secrets.REGISTRY_URL }}
+          serviceTargetPort=${{ secrets.SERVICE_TARGET_PORT }}
+          gitRepo=${{ github.event.repository.name }}
+          gitBranch=${{ steps.extract_branch.outputs.branch }}
+          projClient=$( echo ${gitRepo} | cut -d- -f1,2 )
+          projService=$( echo ${gitRepo}--${gitBranch} | awk -F- 'BEGIN {OFS="-"}{$1="";$2="";sub(/^--/,"");print}' )
+          projName=$( echo ${gitRepo}-${gitBranch} | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]')
+          
+          cd ${{ steps.extract_branch.outputs.branch }}  
+          sed -i "s/\${AITGITCLIENT}/$projClient/g;s/\${AITGITSERVICE}/$projService/g;s/\${AITPROJNAME}/$projName/g;s/\${AITTARGETPORT}/$serviceTargetPort/g" ./k8s/*
+          sed -i "s/\${AITGITNAME}/$gitRepo/g;s/\${AITGITBRANCH}/$gitBranch/g;s/\${REGISTRYURL}/$registryUrl/g" ./k8s/* ./skaffold.yaml
+          
+          skaffold run -n ${{ secrets.NAMESPACE }}
+      
+      - name: Clean up Docker images and Remove Workspace
+        if: steps.check-commit.outputs.run_build == 'true'
+        run: |
+          docker image ls | grep -wi "${{ github.event.repository.name }}" | awk -F' ' '{system("docker image rm -f "$3" || true")}'
+          docker image ls | grep -w '<none>' | awk -F' ' '{system("docker image rm -f "$3" || true")}'
+          docker rm $(docker ps -a -q -f status=exited -f status=created) || true
+          docker rmi $(docker images -q -f dangling=true) || true
+          rm -rf ${{ steps.extract_branch.outputs.branch }} || true

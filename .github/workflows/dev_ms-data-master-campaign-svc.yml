@@ -1,0 +1,47 @@
+name: dev_ms-data-master-campaign-svc
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: sequrradev
+
+    steps:
+      - name: Extract branch name and set environment variables
+        id: extract_branch
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "::set-output name=branch::$(echo ${GITHUB_HEAD_REF} | sed 's/\//-/g')"
+          else
+            echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')"
+          fi
+          echo 'PYTHONIOENCODING=utf-8' >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: "./${{ steps.extract_branch.outputs.branch }}"
+      
+      - name: Build Application
+        run: |
+          cd ${{ steps.extract_branch.outputs.branch }}  
+          
+          docker run -v ${PWD}:/app -w /app maven:3.8.5-openjdk-17 /bin/bash -c "mvn clean compile && mvn install -DskipTests && chown -R 1001:1001 ./target"
+          find . -name '*jar' -exec mv '{}' /home/deploy/.docker-compose/sequrra-dev/campaign/ms-data-master-campaign-svc/target \;
+          cd /home/deploy/.docker-compose/sequrra-dev/ && bash ./.run.sh
+      
+      - name: Clean up Docker images and Remove Workspace
+        run: |
+          docker image ls | grep -wi "campaign" | awk -F' ' '{system("docker image rm -f "$3" || true")}'
+          docker image ls | grep -w '<none>' | awk -F' ' '{system("docker image rm -f "$3" || true")}'
+          docker rm $(docker ps -a -q -f status=exited -f status=created) || true
+          docker rmi $(docker images -q -f dangling=true) || true
+          rm -rf ${{ steps.extract_branch.outputs.branch }} || true
