@@ -10,6 +10,7 @@ spring:
     url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrra
     username: sequrra_dev
     password: MJhFmphEQf4ZPpYdsk8f
+    schemas: ms-data-master-config-svc
     hikari:
       minimum-idle: 1
       maximum-pool-size: 10
@@ -19,6 +20,7 @@ spring:
     url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrradev
     user: sequrra_dev
     password: MJhFmphEQf4ZPpYdsk8f
+    schemas: ms-data-master-config-svc
     baseline-on-migrate: true
     enabled: true
     validate-on-migrate: true
