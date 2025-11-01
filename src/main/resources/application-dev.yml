@@ -7,7 +7,7 @@ spring:
   application:
     name: ms-data-master-campaign
   datasource:
-    url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrradev?currentSchema=ms-data-master-account
+    url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrradev?currentSchema=ms-data-master-campaign-svc
     username: sequrra_dev
     password: MJhFmphEQf4ZPpYdsk8f
     hikari:
