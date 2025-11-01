@@ -13,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CampaignDTO {
     private UUID id;
+    private String campaignName;
     private List<ProductDetailsDTO> productDetails;
     private String titleIdLanguage;
     private String titleEnLanguage;

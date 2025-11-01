@@ -30,6 +30,9 @@ public class Campaign {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
+    @Column(name = "campaign_name")
+    private String campaignName;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "product_details")
     private List<ProductDetailsDTO> productDetails;
