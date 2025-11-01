@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "t_campaign")
+@Table(name = "t_campaign", schema = "ms-data-master-campaign-svc")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
