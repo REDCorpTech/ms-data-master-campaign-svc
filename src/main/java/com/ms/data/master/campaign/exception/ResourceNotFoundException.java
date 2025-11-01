@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.exception;
+package com.ms.data.master.campaign.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

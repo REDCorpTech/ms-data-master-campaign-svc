@@ -1,9 +1,9 @@
-package com.ms.data.master.distribution.controller;
+package com.ms.data.master.campaign.controller;
 
-import com.ms.data.master.distribution.exception.AccountExceptionHandler;
-import com.ms.data.master.distribution.model.dto.campaign.CampaignDTO;
-import com.ms.data.master.distribution.model.dto.response.PageResponse;
-import com.ms.data.master.distribution.service.CampaignService;
+import com.ms.data.master.campaign.exception.AccountExceptionHandler;
+import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
+import com.ms.data.master.campaign.model.dto.response.PageResponse;
+import com.ms.data.master.campaign.service.CampaignService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

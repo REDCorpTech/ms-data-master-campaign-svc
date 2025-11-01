@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.exception;
+package com.ms.data.master.campaign.exception;
 
 public class CustomNotFoundException extends RuntimeException {
     public CustomNotFoundException(String message) {

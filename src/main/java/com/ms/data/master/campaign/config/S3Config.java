@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.config;
+package com.ms.data.master.campaign.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

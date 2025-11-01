@@ -1,10 +1,10 @@
-package com.ms.data.master.distribution.service;
+package com.ms.data.master.campaign.service;
 
-import com.ms.data.master.distribution.model.*;
-import com.ms.data.master.distribution.model.dto.campaign.CampaignDTO;
-import com.ms.data.master.distribution.model.dto.response.PageResponse;
-import com.ms.data.master.distribution.model.mapper.*;
-import com.ms.data.master.distribution.respository.*;
+import com.ms.data.master.campaign.model.*;
+import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
+import com.ms.data.master.campaign.model.dto.response.PageResponse;
+import com.ms.data.master.campaign.model.mapper.*;
+import com.ms.data.master.campaign.respository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;

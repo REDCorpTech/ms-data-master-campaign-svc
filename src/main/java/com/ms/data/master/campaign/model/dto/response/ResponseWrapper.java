@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.model.dto.response;
+package com.ms.data.master.campaign.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

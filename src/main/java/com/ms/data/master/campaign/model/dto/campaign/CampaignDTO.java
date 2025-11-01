@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.model.dto.campaign;
+package com.ms.data.master.campaign.model.dto.campaign;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

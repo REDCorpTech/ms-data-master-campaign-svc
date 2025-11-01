@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution;
+package com.ms.data.master.campaign;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

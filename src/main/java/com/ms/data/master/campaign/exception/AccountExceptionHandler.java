@@ -1,6 +1,6 @@
-package com.ms.data.master.distribution.exception;
+package com.ms.data.master.campaign.exception;
 
-import com.ms.data.master.distribution.model.dto.response.ResponseWrapper;
+import com.ms.data.master.campaign.model.dto.response.ResponseWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.properties;
+package com.ms.data.master.campaign.properties;
 
 import lombok.Getter;
 import lombok.Setter;

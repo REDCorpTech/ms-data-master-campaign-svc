@@ -1,7 +1,7 @@
-package com.ms.data.master.distribution.model;
+package com.ms.data.master.campaign.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ms.data.master.distribution.model.dto.campaign.ProductDetailsDTO;
+import com.ms.data.master.campaign.model.dto.campaign.ProductDetailsDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "t_campaign", schema = "ms-data-master-campaign-svc")
+@Table(name = "t_campaign")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

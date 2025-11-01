@@ -1,4 +1,4 @@
-package com.ms.data.master.distribution.service;
+package com.ms.data.master.campaign.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
