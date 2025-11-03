@@ -36,7 +36,7 @@ public class CampaignScanLogController {
     @Value("${common.sorting}")
     private String sortingPage;
 
-    @GetMapping(value = "${endpoint.campaign-scan-log.get-all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "${endpoint.campaign-scan-log.get-all}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageResponse<CampaignScanLogDTO>> getAllCampaign(
             @RequestParam(value = "pageableSize", required = false) Integer defaultPageableSize,
             @RequestParam(value = "pageablePage", required = false) Integer defaultPageablePage,
