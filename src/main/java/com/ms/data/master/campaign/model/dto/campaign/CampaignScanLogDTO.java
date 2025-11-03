@@ -15,6 +15,7 @@ public class CampaignScanLogDTO {
     private UUID id;
     private String campaignName;
     private String email;
+    private Boolean isClaim;
     private List<ProductDetailsDTO> productDetails;
     private String scanBy;
     private LocalDateTime scanAt;

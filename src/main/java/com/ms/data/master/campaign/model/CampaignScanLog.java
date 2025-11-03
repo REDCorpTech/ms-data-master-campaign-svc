@@ -37,6 +37,9 @@ public class CampaignScanLog {
     @Column(name = "product_details")
     private List<ProductDetailsDTO> productDetails;
 
+    @Column(name = "is_claim")
+    private Boolean isClaim;
+
     @Column(name = "campaign_name")
     private String campaignName;
 

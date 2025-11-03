@@ -10,6 +10,7 @@ CREATE TABLE t_campaign_scan_log (
                                                                     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                                                     email VARCHAR,
                                                                     product_details JSONB,
+                                                                    is_claim BOOLEAN DEFAULT FALSE,
                                                                     campaign_name VARCHAR,
                                                                     scan_by VARCHAR,
                                                                     scan_at TIMESTAMP
