@@ -47,6 +47,12 @@ endpoint:
     get-by-campaign-status: campaignStatus/{campaignStatus}
     update: /{id}
     delete: /{id}
+  campaign-scan-log:
+    base: /campaign-scan-log
+    get-all: /
+    get-by-id: /{id}
+    update: /{id}
+    delete: /{id}
 
 
 aws:
