@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,8 +66,12 @@ public class CampaignScanLogController {
     }
 
     @GetMapping(value = "${endpoint.campaign-scan-log.get-count-scan-by-email", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> getCampaignByOrderRequestStatus(@PathVariable String email) {
-        return ResponseEntity.ok(campaignScanLogService.getScanCountByEmail(email));
+    public ResponseEntity<Map<String, Object>> getCampaignByOrderRequestStatus(@PathVariable String email) {
+        Long count = campaignScanLogService.getScanCountByEmail(email);
+        Map<String, Object> response = new HashMap<>();
+        response.put("email", email);
+        response.put("totalScans", count);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping( value = "${endpoint.campaign-scan-log.update}", produces = MediaType.APPLICATION_JSON_VALUE)
