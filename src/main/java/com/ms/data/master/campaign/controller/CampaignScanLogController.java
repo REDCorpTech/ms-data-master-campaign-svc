@@ -65,7 +65,7 @@ public class CampaignScanLogController {
         return ResponseEntity.ok(campaignScanLogService.getIdService(id));
     }
 
-    @GetMapping(value = "${endpoint.campaign-scan-log.get-count-scan-by-email", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "${endpoint.campaign-scan-log.get-count-scan-by-email}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> getCampaignByOrderRequestStatus(@PathVariable String email) {
         Long count = campaignScanLogService.getScanCountByEmail(email);
         Map<String, Object> response = new HashMap<>();
