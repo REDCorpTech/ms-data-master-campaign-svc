@@ -11,5 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface CampaignScanLogRepository extends JpaRepository<CampaignScanLog, UUID>, JpaSpecificationExecutor<CampaignScanLog> {
-
+    Long countByEmail(String email);
 }

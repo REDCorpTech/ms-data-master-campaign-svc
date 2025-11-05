@@ -51,6 +51,11 @@ public class CampaignScanLogService {
         return CampaignScanLogMapper.INSTANCE.toDTO(getIdFromRepository(id));
     }
 
+    public void recordScan(CampaignScanLogDTO dto) {
+        CampaignScanLog entity = CampaignScanLogMapper.INSTANCE.toEntity(dto);
+        campaignScanLogRepository.save(entity);
+    }
+
     @Transactional
     public CampaignScanLogDTO createService(CampaignScanLogDTO campaignScanLogDTO) {
         return CampaignScanLogMapper.INSTANCE.toDTO(
@@ -65,6 +70,10 @@ public class CampaignScanLogService {
         return CampaignScanLogMapper.INSTANCE.toDTO(
                 campaignScanLogRepository.save(updateEntityFromDTO(getIdFromRepository(id), campaignScanLogDTO))
         );
+    }
+
+    public Long getScanCountByEmail(String email) {
+        return countScanByEmailFromRepository(email);
     }
 
     public void deleteService(UUID id) {
@@ -93,6 +102,10 @@ public class CampaignScanLogService {
         existing.setScanAt(LocalDateTime.now());
         existing.setScanBy(dto.getScanBy());
         return existing;
+    }
+
+    private Long countScanByEmailFromRepository(String email) {
+        return campaignScanLogRepository.countByEmail(email);
     }
 
     private Specification<CampaignScanLog> buildSpecification(

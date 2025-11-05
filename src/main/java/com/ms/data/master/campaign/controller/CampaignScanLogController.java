@@ -63,6 +63,10 @@ public class CampaignScanLogController {
         return ResponseEntity.ok(campaignScanLogService.getIdService(id));
     }
 
+    @GetMapping(value = "${endpoint.campaign-scan-log.get-count-scan-by-email", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> getCampaignByOrderRequestStatus(@PathVariable String email) {
+        return ResponseEntity.ok(campaignScanLogService.getScanCountByEmail(email));
+    }
 
     @PutMapping( value = "${endpoint.campaign-scan-log.update}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CampaignScanLogDTO> updateCampaign(@PathVariable UUID id, @RequestBody CampaignScanLogDTO campaignScanLogDTO) {

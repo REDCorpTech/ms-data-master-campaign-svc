@@ -33,26 +33,6 @@ spring:
     hibernate:
       ddl-auto: none
 
-  # Security
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 140965361707-ggcluflva9ma8qgjf1ko0kl9a41o006a.apps.googleusercontent.com
-            client-secret: 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
-            scope:
-              - openid
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: sub
-
 common:
   pageable:
     size: 100
@@ -72,14 +52,20 @@ security:
 
 #endpoint-configuration
 endpoint:
-  authentication:
-    base: /authentication
-    signup: /signup
-    login: /login
-    refresh-token: /refresh-token
-    forgot-password: /forgot-password
-    reset-password: /reset-password
-    oauth-google: /oauth-google
+  campaign:
+    base: /campaign
+    get-all: /
+    get-by-id: /{id}
+    get-by-campaign-status: campaignStatus/{campaignStatus}
+    update: /{id}
+    delete: /{id}
+  campaign-scan-log:
+    base: /campaign-scan-log
+    get-all: /
+    get-by-id: /{id}
+    update: /{id}
+    delete: /{id}
+    get-count-scan-by-email: /countScanByEmail/{email}
 
 
 #kafka:

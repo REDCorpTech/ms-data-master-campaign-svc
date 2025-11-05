@@ -53,6 +53,7 @@ endpoint:
     get-by-id: /{id}
     update: /{id}
     delete: /{id}
+    get-count-scan-by-email: /countScanByEmail/{email}
 
 
 aws:

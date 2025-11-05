@@ -15,4 +15,5 @@ public class CampaignScanLogEndpointProperties {
     private String getById;
     private String update;
     private String delete;
+    private String getCountScanByEmail;
 }
