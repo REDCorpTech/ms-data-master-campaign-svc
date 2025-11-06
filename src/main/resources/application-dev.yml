@@ -44,7 +44,7 @@ endpoint:
     base: /campaign
     get-all: /
     get-by-id: /{id}
-    get-by-campaign-status: campaignStatus/{campaignStatus}
+    get-by-campaign-status: /campaignStatus/{campaignStatus}
     update: /{id}
     delete: /{id}
   campaign-scan-log:
