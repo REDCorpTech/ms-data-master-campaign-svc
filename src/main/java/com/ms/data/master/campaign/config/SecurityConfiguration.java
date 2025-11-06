@@ -26,17 +26,19 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("*://localhost:*"); // Allows all origins with "localhost" and any port
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
+        @Bean
+        public CorsFilter corsFilter() {
+            CorsConfiguration corsConfiguration = new CorsConfiguration();
+            corsConfiguration.setAllowCredentials(true);
+            corsConfiguration.addAllowedOriginPattern("*://localhost:*"); // Allows all origins with "localhost" and any port
+            corsConfiguration.addAllowedHeader("*");
+            corsConfiguration.addAllowedMethod("*");
+            corsConfiguration.addAllowedOriginPattern("https://brand.sequrra.com"); // Allows all origins with "ugkslimousine.com"
+            corsConfiguration.addAllowedOriginPattern("https://admin.sequrra.com"); // Allows all origins with "ugkslimousine.com"
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", corsConfiguration);
 
-        return new CorsFilter(source);
-    }
+            return new CorsFilter(source);
+        }
 }
