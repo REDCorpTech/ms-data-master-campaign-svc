@@ -34,13 +34,13 @@ jobs:
         run: |
           cd ${{ steps.extract_branch.outputs.branch }}
 
-          docker image ls | grep '577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign' | awk '{print \$3}'| xargs -I '{}' docker image rm -f '{}' || true
+          docker image ls | grep '577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign' | awk '{print \$3}'| xargs -I '{}' docker image rm -f '{}' 2>&1 | true
           docker build -t 577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign:latest .
           bash /home/deploy/.aws/ecr-login
           docker push 577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign:latest
-          ssh sequrraprd "docker stop campaign || true"
-          ssh sequrraprd "docker rm campaign || true"
-          ssh sequrraprd "docker image ls | grep '577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign' | awk '{print \$3}'| xargs -I '{}' docker image rm -f '{}' || true"
+          ssh sequrraprd "docker stop campaign 2>&1 | true"
+          ssh sequrraprd "docker rm campaign 2>&1 | true"
+          ssh sequrraprd "docker image ls | grep '577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign' | awk '{print \$3}'| xargs -I '{}' docker image rm -f '{}' 2>&1 | true"
           ssh sequrraprd "bash /home/ubuntu/.aws/ecr-login"
           ssh sequrraprd "docker pull 577638362838.dkr.ecr.ap-southeast-3.amazonaws.com/sequrra/campaign:latest"
           ssh sequrraprd "docker compose -f /home/ubuntu/app/docker-compose.app.yml up -d --force-recreate"
