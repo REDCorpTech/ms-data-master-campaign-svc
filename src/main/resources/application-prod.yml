@@ -1,26 +1,25 @@
 server:
   servlet:
-    context-path: /ms-data-master-distribution/api/v1
-  port: 8083
+    context-path: /ms-data-master-campaign/api/v1
+  port: 8084
 
 spring:
-  profiles:
-    active: dev
   application:
-    name: ms-data-master-account
+    name: ms-data-master-campaign
   datasource:
-    url: jdbc:postgresql://sequrra-postgres-prod.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrra
-    username: sequrra_root
-    password: g9fpiEpET9AAXC8kQygE
+    url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrradev?currentSchema=ms-data-master-account
+    username: sequrra_dev
+    password: MJhFmphEQf4ZPpYdsk8f
     hikari:
       minimum-idle: 1
       maximum-pool-size: 10
       idle-timeout: 300000
     driver-class-name: org.postgresql.Driver
   flyway:
-    url: jdbc:postgresql://sequrra-postgres-prod.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrra
-    user: sequrra_root
-    password: g9fpiEpET9AAXC8kQygE
+    url: jdbc:postgresql://sequrra-postgres-dev.czgs6oy66x99.ap-southeast-3.rds.amazonaws.com:5432/sequrradev
+    user: sequrra_dev
+    password: MJhFmphEQf4ZPpYdsk8f
+    schemas: ms-data-master-campaign-svc
     baseline-on-migrate: true
     enabled: true
     validate-on-migrate: true
@@ -38,17 +37,6 @@ common:
     size: 100
     page: 0
   sorting: ASC
-
-security:
-  jwt:
-
-
-
-#oss:
-#  endpoint: https://ap-south-1.linodeobjects.com
-#  secret-key: Tcoz4fHXQVpctEm4mLApofuua9GkmUHhPYpYS6DB
-#  access-key: 5Q6I158TPIDBOLAAB2V0
-#  bucket: ugks-oss
 
 #endpoint-configuration
 endpoint:
@@ -68,6 +56,13 @@ endpoint:
     get-count-scan-by-email: /countScanByEmail/{email}
 
 
+aws:
+  region: ap-southeast-3
+  credentials:
+    accessKey: AKIAYM7PN53LNWVX4GM3
+    secretKey: 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
+  s3:
+    bucket: sequrra-media-dev
 #kafka:
 #  producer:
 #    bootstrap-servers: 139.162.36.148:9093
