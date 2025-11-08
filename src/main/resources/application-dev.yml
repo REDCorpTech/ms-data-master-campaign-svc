@@ -57,7 +57,7 @@ endpoint:
   coupon:
     base: /campaign
     get-all: /
-    get-by-id: /{id}]
+    get-by-id: /{id}
     delete: /{id}
     get-by-coupon-status: /campaignStatus/{campaignStatus}
 
