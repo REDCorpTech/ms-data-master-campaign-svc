@@ -55,7 +55,7 @@ endpoint:
     delete: /{id}
     get-count-scan-by-email: /countScanByEmail/{email}
   coupon:
-    base: /campaign
+    base: /coupon
     get-all: /
     get-by-id: /{id}
     delete: /{id}
