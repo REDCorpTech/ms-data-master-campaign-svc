@@ -36,7 +36,7 @@ public class Coupon {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "customer_coupon_redeemer_details")
-    private CustomerCouponRedeemerDTO customerCouponRedeemerDTO;
+    private CustomerCouponRedeemerDTO customerCouponRedeemerDetails;
 
     @Column(name = "coupon_status")
     private String couponStatus;

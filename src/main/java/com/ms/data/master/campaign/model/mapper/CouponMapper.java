@@ -15,6 +15,4 @@ public interface CouponMapper {
     Coupon toEntity(CouponDTO couponDTO);
 
     CouponDTO toDTO(Coupon coupon);
-
-    void updateFromDTOToEntity(CouponDTO couponDTO, @MappingTarget Coupon coupon);
 }
