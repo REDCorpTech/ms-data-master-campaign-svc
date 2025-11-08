@@ -12,4 +12,5 @@ import java.util.UUID;
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, UUID>, JpaSpecificationExecutor<Coupon> {
     List<Coupon> findAllByCouponStatus(String couponStatus);
+    Boolean existsByCouponCode(String couponCode);
 }

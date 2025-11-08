@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final Random random = new Random();
 
     public PageResponse<CouponDTO> getAllService(Integer pageableSize, Integer pageablePage, Sort sorting,
                                                  CouponDTO couponDTO,
@@ -62,12 +64,12 @@ public class CouponService {
 
     @Transactional
     public CouponDTO createService(CouponDTO couponDTO) {
-        return CouponMapper.INSTANCE.toDTO(
-                couponRepository.save(
-                                CouponMapper.INSTANCE.toEntity(couponDTO)
-                )
-        );
+        if (couponDTO.getCouponCode() == null || couponDTO.getCouponCode().isBlank())
+            couponDTO.setCouponCode(generateUniqueCouponCode());
+        return CouponMapper.INSTANCE.toDTO(couponRepository.save(CouponMapper.INSTANCE.toEntity(couponDTO)));
     }
+
+
 
 
     public void deleteService(UUID id) {
@@ -95,6 +97,23 @@ public class CouponService {
 
     private void deleteFromRepository(UUID id) {
         couponRepository.deleteById(id);
+    }
+
+    private String generateUniqueCouponCode() {
+        String code;
+        do {
+            code = randomLetters(2) + String.format("%03d", random.nextInt(1000)) + randomLetters(2);
+        } while (couponRepository.existsByCouponCode(code)); // ensure no duplicates
+        return code;
+    }
+
+    private String randomLetters(int count) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            char letter = (char) ('A' + random.nextInt(26)); // only uppercase
+            sb.append(letter);
+        }
+        return sb.toString();
     }
 
 
