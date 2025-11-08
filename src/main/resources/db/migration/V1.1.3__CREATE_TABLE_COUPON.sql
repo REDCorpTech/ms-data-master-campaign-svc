@@ -16,8 +16,8 @@ CREATE TABLE t_coupon (
 );
 
 -- Create indexes
-CREATE INDEX idx_coupon_json_created_at ON t_coupon(scan_at);
-CREATE INDEX idx_coupon_json_updated_at ON t_coupon(scan_by);
+CREATE INDEX idx_coupon_json_created_at ON t_coupon(created_at);
+CREATE INDEX idx_coupon_json_created_by ON t_coupon(created_by);
 
 -- CREATE EXTENSION
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
