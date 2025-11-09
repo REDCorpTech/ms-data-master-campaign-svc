@@ -35,6 +35,10 @@ public class Coupon {
     private String couponCode;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "product_details")
+    private List<ProductDetailsDTO> productDetails;
+
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "customer_coupon_redeemer_details")
     private CustomerCouponRedeemerDTO customerCouponRedeemerDetails;
 
