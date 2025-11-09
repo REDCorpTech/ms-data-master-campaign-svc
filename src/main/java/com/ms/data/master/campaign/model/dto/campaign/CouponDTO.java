@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CouponDTO {
     private UUID id;
+    private List<ProductDetailsDTO> productDetails;
     private CustomerCouponRedeemerDTO customerCouponRedeemerDetails;
     private String couponCode;
     private String couponStatus;
