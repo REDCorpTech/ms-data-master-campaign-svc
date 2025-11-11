@@ -118,11 +118,11 @@ public class CouponService {
 
 
     private Specification<Coupon> buildSpecification(
-            CouponDTO couponDTO,
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            String search
-    ) {
+                    CouponDTO couponDTO,
+                    LocalDateTime startDate,
+                    LocalDateTime endDate,
+                    String search
+            ) {
         return (root, query, cb) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -139,14 +139,11 @@ public class CouponService {
 
                 // Normal columns
                 searchPredicates.add(cb.like(cb.lower(root.get("createdBy")), likePattern));
-                searchPredicates.add(cb.like(cb.lower(root.get("campaignStatus")), likePattern));
-                searchPredicates.add(cb.like(cb.lower(root.get("titleIdLanguage")), likePattern));
-                searchPredicates.add(cb.like(cb.lower(root.get("titleEnLanguage")), likePattern));
-                searchPredicates.add(cb.like(cb.lower(root.get("descriptionIdLanguage")), likePattern));
-                searchPredicates.add(cb.like(cb.lower(root.get("descriptionEnLanguage")), likePattern));
+                searchPredicates.add(cb.like(cb.lower(root.get("couponStatus")), likePattern));
 
-                // JSON column: productDetails.productName (PostgreSQL only)
+                // JSON columns
                 searchPredicates.add(jsonbLike(cb, root, "productDetails", "productName", likePattern));
+                searchPredicates.add(jsonbLike(cb, root, "customerCouponRedeemerDetails", "customerEmail", likePattern));
 
                 predicates.add(cb.or(searchPredicates.toArray(new Predicate[0])));
             }

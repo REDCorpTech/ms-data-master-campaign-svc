@@ -13,6 +13,7 @@ import java.util.UUID;
 public class CustomerCouponRedeemerDTO {
     private UUID id;
     private String customerName;
+    private String customerEmail;
     private LocalDate customerBirthOfDate;
     private String customerWhatsappNumber;
     private String customerGender;
