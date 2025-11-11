@@ -54,6 +54,12 @@ endpoint:
     update: /{id}
     delete: /{id}
     get-count-scan-by-email: /countScanByEmail/{email}
+  coupon:
+    base: /coupon
+    get-all: /
+    get-by-id: /{id}
+    delete: /{id}
+    get-by-coupon-status: /campaignStatus/{campaignStatus}
 
 
 aws:
