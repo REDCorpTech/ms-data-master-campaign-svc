@@ -10,10 +10,7 @@ import com.ms.data.master.campaign.model.mapper.CouponMapper;
 import com.ms.data.master.campaign.respository.CampaignRepository;
 import com.ms.data.master.campaign.respository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +128,23 @@ public class CouponService {
             addIfNotNull(predicates, cb, root.get("id"), couponDTO.getId());
             addIfNotEmpty(predicates, cb, root.get("createdBy"), couponDTO.getCreatedBy());
             addIfNotEmpty(predicates, cb, root.get("couponStatus"), couponDTO.getCouponStatus());
+            // ✅ Handle nested customerEmail inside JSONB
+            if (couponDTO.getCustomerCouponRedeemerDetails() != null &&
+                    couponDTO.getCustomerCouponRedeemerDetails().getCustomerEmail() != null &&
+                    !couponDTO.getCustomerCouponRedeemerDetails().getCustomerEmail().isBlank()) {
+
+                String email = couponDTO.getCustomerCouponRedeemerDetails().getCustomerEmail().toLowerCase();
+
+                // PostgreSQL JSONB path filter
+                Expression<String> customerEmailExpr = cb.function(
+                        "jsonb_extract_path_text",
+                        String.class,
+                        root.get("customerCouponRedeemerDetails"),
+                        cb.literal("customerEmail")
+                );
+
+                predicates.add(cb.equal(cb.lower(customerEmailExpr), email));
+            }
 
             // 4️⃣ Free-text search
             if (search != null && !search.isBlank()) {
