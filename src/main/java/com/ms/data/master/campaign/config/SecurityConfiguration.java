@@ -36,6 +36,8 @@ public class SecurityConfiguration {
             corsConfiguration.addAllowedOriginPattern("https://brand.sequrra.com"); // Allows all origins with "ugkslimousine.com"
             corsConfiguration.addAllowedOriginPattern("https://brand-dev.sequrra.com"); // Allows all origins with "ugkslimousine.com"
             corsConfiguration.addAllowedOriginPattern("https://admin.sequrra.com"); // Allows all origins with "ugkslimousine.com"
+            corsConfiguration.addAllowedOriginPattern("https://admin.sequrra.com"); // Allows all origins with "ugkslimousine.com"
+            corsConfiguration.addAllowedOriginPattern("https://sqr.sequrra.com"); // Allows all origins with "ugkslimousine.com"
 
             UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
             source.registerCorsConfiguration("/**", corsConfiguration);
