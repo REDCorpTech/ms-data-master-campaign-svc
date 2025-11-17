@@ -2,6 +2,7 @@ package com.ms.data.master.campaign.service;
 
 import com.ms.data.master.campaign.model.*;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
+import com.ms.data.master.campaign.model.dto.campaign.CampaignStatus;
 import com.ms.data.master.campaign.model.dto.response.PageResponse;
 import com.ms.data.master.campaign.model.mapper.*;
 import com.ms.data.master.campaign.respository.*;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CampaignService {
     private final CampaignRepository campaignRepository;
+    private CampaignStatus campaignStatus;
 
     public PageResponse<CampaignDTO> getAllService(Integer pageableSize, Integer pageablePage, Sort sorting,
                                                    CampaignDTO campaignDTO,
@@ -57,12 +59,16 @@ public class CampaignService {
 
     @Transactional
     public CampaignDTO createService(CampaignDTO campaignDTO) {
-        return CampaignMapper.INSTANCE.toDTO(
-                campaignRepository.save(
-                                CampaignMapper.INSTANCE.toEntity(campaignDTO)
-                )
+
+        Campaign entity = CampaignMapper.INSTANCE.toEntity(campaignDTO);
+
+        entity.setCampaignStatus(
+                determineStatus(campaignDTO.getStartDate(), campaignDTO.getEndDate()).name()
         );
+
+        return CampaignMapper.INSTANCE.toDTO(campaignRepository.save(entity));
     }
+
 
     @Transactional
     public CampaignDTO updateService(UUID id, CampaignDTO campaignDTO) {
@@ -103,6 +109,18 @@ public class CampaignService {
         existing.setUpdatedAt(LocalDateTime.now());
         existing.setUpdatedBy(dto.getUpdatedBy());
         return existing;
+    }
+
+    public CampaignStatus determineStatus(LocalDateTime start, LocalDateTime end) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(start)) {
+            return CampaignStatus.NOT_STARTED;
+        } else if (now.isAfter(end)) {
+            return CampaignStatus.ENDED;
+        } else {
+            return CampaignStatus.ONGOING;
+        }
     }
 
     private Specification<Campaign> buildSpecification(
