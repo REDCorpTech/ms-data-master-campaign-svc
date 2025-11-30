@@ -1,15 +1,16 @@
 package com.ms.data.master.campaign.service;
 
+import com.ms.data.master.campaign.config.JwtUtil;
 import com.ms.data.master.campaign.model.*;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
+import com.ms.data.master.campaign.model.dto.campaign.CampaignStatus;
 import com.ms.data.master.campaign.model.dto.response.PageResponse;
 import com.ms.data.master.campaign.model.mapper.*;
 import com.ms.data.master.campaign.respository.*;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,22 +31,30 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CampaignService {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final CampaignRepository campaignRepository;
 
-    public PageResponse<CampaignDTO> getAllService(Integer pageableSize, Integer pageablePage, Sort sorting,
-                                                   CampaignDTO campaignDTO,
-                                                   LocalDateTime startDate, LocalDateTime endDate, String search) {
+    private final JwtUtil jwtUtil;
+
+    public PageResponse<CampaignDTO> getAllService(
+            String token,
+            Integer pageableSize,
+            Integer pageablePage,
+            Sort sorting,
+            CampaignDTO campaignDTO,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            String search) {
+        Page<Campaign> page = getAllFromRepository(
+                pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search, jwtUtil.getBrandId(token));
         return new PageResponse<>(
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search)
-                        .getContent()
-                        .stream()
-                        .map(CampaignMapper.INSTANCE::toDTO)
-                        .collect(Collectors.toList()),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getTotalElements(),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getSize(),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getNumber() + 1
-        );
+                page.getContent().stream().map(CampaignMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                page.getTotalElements(), page.getSize(),
+                page.getNumber() + 1);
     }
+
 
     public CampaignDTO getIdService(UUID id) {
         return CampaignMapper.INSTANCE.toDTO(getIdFromRepository(id));
@@ -57,12 +66,16 @@ public class CampaignService {
 
     @Transactional
     public CampaignDTO createService(CampaignDTO campaignDTO) {
-        return CampaignMapper.INSTANCE.toDTO(
-                campaignRepository.save(
-                                CampaignMapper.INSTANCE.toEntity(campaignDTO)
-                )
+
+        Campaign entity = CampaignMapper.INSTANCE.toEntity(campaignDTO);
+
+        entity.setCampaignStatus(
+                determineStatus(campaignDTO.getStartDate(), campaignDTO.getEndDate()).name()
         );
+
+        return CampaignMapper.INSTANCE.toDTO(campaignRepository.save(entity));
     }
+
 
     @Transactional
     public CampaignDTO updateService(UUID id, CampaignDTO campaignDTO) {
@@ -76,11 +89,14 @@ public class CampaignService {
     }
 
     private Page<Campaign> getAllFromRepository(Integer pageableSize, Integer pageablePage, Sort sorting,
-                                                CampaignDTO campaignDTO,
-                                                LocalDateTime startDate, LocalDateTime endDate, String search) {
-        return campaignRepository.findAll(buildSpecification(campaignDTO, startDate, endDate, search),
-                PageRequest.of(pageablePage, pageableSize, sorting));
+                                                CampaignDTO campaignDTO, LocalDateTime startDate, LocalDateTime endDate, String search, String brandId) {
+
+        return campaignRepository.findAll(
+                buildSpecification(campaignDTO, startDate, endDate, search, brandId),
+                PageRequest.of(pageablePage, pageableSize, sorting)
+        );
     }
+
 
 
     private Campaign getIdFromRepository(UUID id) {
@@ -105,11 +121,24 @@ public class CampaignService {
         return existing;
     }
 
+    public CampaignStatus determineStatus(LocalDateTime start, LocalDateTime end) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(start)) {
+            return CampaignStatus.NOT_STARTED;
+        } else if (now.isAfter(end)) {
+            return CampaignStatus.ENDED;
+        } else {
+            return CampaignStatus.ONGOING;
+        }
+    }
+
     private Specification<Campaign> buildSpecification(
             CampaignDTO campaignDTO,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            String search
+            String search,
+            String brandId
     ) {
         return (root, query, cb) -> {
 
@@ -155,6 +184,27 @@ public class CampaignService {
                 searchPredicates.add(jsonbLike(cb, root, "productDetails", "productName", likePattern));
 
                 predicates.add(cb.or(searchPredicates.toArray(new Predicate[0])));
+            }
+
+            // First get campaign IDs from native query, then use in Criteria API
+            if (brandId != null) {
+                String nativeSql = "SELECT c.id FROM \"ms-data-master-campaign-svc\".t_campaign c " +
+                        "WHERE EXISTS ( " +
+                        "    SELECT 1 FROM jsonb_array_elements(c.product_details_jsonb) AS prod " +
+                        "    INNER JOIN public.\"ProductVariants\" p ON p.id = (prod->>'id') " +
+                        "    WHERE p.\"brandId\" = ?1 " +
+                        ")";
+
+                List<String> campaignIds = entityManager.createNativeQuery(nativeSql)
+                        .setParameter(1, brandId)
+                        .getResultList();
+
+                if (!campaignIds.isEmpty()) {
+                    predicates.add(root.get("id").in(campaignIds));
+                } else {
+                    // Return empty result if no campaigns match the brand
+                    predicates.add(cb.equal(root.get("id"), ""));
+                }
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
