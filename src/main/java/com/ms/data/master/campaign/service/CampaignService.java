@@ -1,5 +1,6 @@
 package com.ms.data.master.campaign.service;
 
+import com.ms.data.master.campaign.config.JwtUtil;
 import com.ms.data.master.campaign.model.*;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignStatus;
@@ -7,10 +8,7 @@ import com.ms.data.master.campaign.model.dto.response.PageResponse;
 import com.ms.data.master.campaign.model.mapper.*;
 import com.ms.data.master.campaign.respository.*;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,22 +30,46 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CampaignService {
     private final CampaignRepository campaignRepository;
+    private final JwtUtil jwtUtil;
     private CampaignStatus campaignStatus;
 
-    public PageResponse<CampaignDTO> getAllService(Integer pageableSize, Integer pageablePage, Sort sorting,
-                                                   CampaignDTO campaignDTO,
-                                                   LocalDateTime startDate, LocalDateTime endDate, String search) {
+    public PageResponse<CampaignDTO> getAllService(
+            String token,
+            Integer pageableSize,
+            Integer pageablePage,
+            Sort sorting,
+            CampaignDTO campaignDTO,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            String search) {
+
+        // 1️⃣ Ambil brandId dari token
+        String brandId = jwtUtil.getSub(token); // sub = brandId
+
+        // 2️⃣ Panggil satu kali saja
+        Page<Campaign> page = getAllFromRepository(
+                pageableSize,
+                pageablePage,
+                sorting,
+                campaignDTO,
+                startDate,
+                endDate,
+                search,
+                brandId
+        );
+
+        // 3️⃣ Return response
         return new PageResponse<>(
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search)
-                        .getContent()
+                page.getContent()
                         .stream()
                         .map(CampaignMapper.INSTANCE::toDTO)
                         .collect(Collectors.toList()),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getTotalElements(),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getSize(),
-                getAllFromRepository(pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search).getNumber() + 1
+                page.getTotalElements(),
+                page.getSize(),
+                page.getNumber() + 1
         );
     }
+
 
     public CampaignDTO getIdService(UUID id) {
         return CampaignMapper.INSTANCE.toDTO(getIdFromRepository(id));
@@ -82,11 +104,14 @@ public class CampaignService {
     }
 
     private Page<Campaign> getAllFromRepository(Integer pageableSize, Integer pageablePage, Sort sorting,
-                                                CampaignDTO campaignDTO,
-                                                LocalDateTime startDate, LocalDateTime endDate, String search) {
-        return campaignRepository.findAll(buildSpecification(campaignDTO, startDate, endDate, search),
-                PageRequest.of(pageablePage, pageableSize, sorting));
+                                                CampaignDTO campaignDTO, LocalDateTime startDate, LocalDateTime endDate, String search, String brandId) {
+
+        return campaignRepository.findAll(
+                buildSpecification(campaignDTO, startDate, endDate, search, brandId),
+                PageRequest.of(pageablePage, pageableSize, sorting)
+        );
     }
+
 
 
     private Campaign getIdFromRepository(UUID id) {
@@ -127,7 +152,8 @@ public class CampaignService {
             CampaignDTO campaignDTO,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            String search
+            String search,
+            String brandId
     ) {
         return (root, query, cb) -> {
 
@@ -173,6 +199,25 @@ public class CampaignService {
                 searchPredicates.add(jsonbLike(cb, root, "productDetails", "productName", likePattern));
 
                 predicates.add(cb.or(searchPredicates.toArray(new Predicate[0])));
+            }
+
+            if (brandId != null) {
+                Subquery<Integer> sub = query.subquery(Integer.class);
+                Root<Products> productRoot = sub.from(Products.class);
+
+                Expression<String> productIdJson = cb.function(
+                        "jsonb_array_elements_text",
+                        String.class,
+                        root.get("productDetails")
+                );
+
+                sub.select(cb.literal(1))
+                        .where(
+                                cb.equal(productRoot.get("id"), productIdJson),
+                                cb.equal(productRoot.get("brandId"), brandId)
+                        );
+
+                predicates.add(cb.exists(sub));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

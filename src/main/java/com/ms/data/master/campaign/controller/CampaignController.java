@@ -36,6 +36,7 @@ public class CampaignController {
 
     @GetMapping(value = "${endpoint.campaign.get-all}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageResponse<CampaignDTO>> getAllCampaign(
+            @RequestHeader("Authorization") String authHeader,
             @RequestParam(value = "pageableSize", required = false) Integer defaultPageableSize,
             @RequestParam(value = "pageablePage", required = false) Integer defaultPageablePage,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -43,8 +44,8 @@ public class CampaignController {
             @RequestParam(value = "search", required = false) String search,
             @ModelAttribute CampaignDTO campaignDTO,
             @SortDefault(sort = "id", direction = Sort.Direction.ASC) Sort sorting) throws AccountExceptionHandler {
-
         return ResponseEntity.ok(campaignService.getAllService(
+                authHeader.replace("Bearer ", ""),
                 Optional.ofNullable(defaultPageableSize).filter(size -> size > 0).orElse(pageableSize),
                 Optional.ofNullable(defaultPageablePage).filter(page -> page >= 0).orElse(pageablePage),
                 Optional.ofNullable(sorting).orElse(Sort.by(Sort.Direction.fromString(sortingPage), "id")),
