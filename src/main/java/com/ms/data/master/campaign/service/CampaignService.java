@@ -7,7 +7,9 @@ import com.ms.data.master.campaign.model.dto.campaign.CampaignStatus;
 import com.ms.data.master.campaign.model.dto.response.PageResponse;
 import com.ms.data.master.campaign.model.mapper.*;
 import com.ms.data.master.campaign.respository.*;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +31,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CampaignService {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final CampaignRepository campaignRepository;
+
     private final JwtUtil jwtUtil;
-    private CampaignStatus campaignStatus;
 
     public PageResponse<CampaignDTO> getAllService(
             String token,
@@ -42,32 +47,12 @@ public class CampaignService {
             LocalDateTime startDate,
             LocalDateTime endDate,
             String search) {
-
-        // 1️⃣ Ambil brandId dari token
-        String brandId = jwtUtil.getSub(token); // sub = brandId
-
-        // 2️⃣ Panggil satu kali saja
         Page<Campaign> page = getAllFromRepository(
-                pageableSize,
-                pageablePage,
-                sorting,
-                campaignDTO,
-                startDate,
-                endDate,
-                search,
-                brandId
-        );
-
-        // 3️⃣ Return response
+                pageableSize, pageablePage, sorting, campaignDTO, startDate, endDate, search, jwtUtil.getBrandId(token));
         return new PageResponse<>(
-                page.getContent()
-                        .stream()
-                        .map(CampaignMapper.INSTANCE::toDTO)
-                        .collect(Collectors.toList()),
-                page.getTotalElements(),
-                page.getSize(),
-                page.getNumber() + 1
-        );
+                page.getContent().stream().map(CampaignMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                page.getTotalElements(), page.getSize(),
+                page.getNumber() + 1);
     }
 
 
@@ -201,23 +186,25 @@ public class CampaignService {
                 predicates.add(cb.or(searchPredicates.toArray(new Predicate[0])));
             }
 
+            // First get campaign IDs from native query, then use in Criteria API
             if (brandId != null) {
-                Subquery<Integer> sub = query.subquery(Integer.class);
-                Root<Products> productRoot = sub.from(Products.class);
+                String nativeSql = "SELECT c.id FROM \"ms-data-master-campaign-svc\".t_campaign c " +
+                        "WHERE EXISTS ( " +
+                        "    SELECT 1 FROM jsonb_array_elements(c.product_details_jsonb) AS prod " +
+                        "    INNER JOIN public.\"ProductVariants\" p ON p.id = (prod->>'id') " +
+                        "    WHERE p.\"brandId\" = ?1 " +
+                        ")";
 
-                Expression<String> productIdJson = cb.function(
-                        "jsonb_array_elements_text",
-                        String.class,
-                        root.get("productDetails")
-                );
+                List<String> campaignIds = entityManager.createNativeQuery(nativeSql)
+                        .setParameter(1, brandId)
+                        .getResultList();
 
-                sub.select(cb.literal(1))
-                        .where(
-                                cb.equal(productRoot.get("id"), productIdJson),
-                                cb.equal(productRoot.get("brandId"), brandId)
-                        );
-
-                predicates.add(cb.exists(sub));
+                if (!campaignIds.isEmpty()) {
+                    predicates.add(root.get("id").in(campaignIds));
+                } else {
+                    // Return empty result if no campaigns match the brand
+                    predicates.add(cb.equal(root.get("id"), ""));
+                }
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

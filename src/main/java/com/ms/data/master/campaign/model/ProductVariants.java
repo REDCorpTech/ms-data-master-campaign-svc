@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products", schema = "public")
+@Table(name = "ProductVariants", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Products {
+public class ProductVariants {
     @Id
     @Column(name = "id", length = 36)
     private String id;
