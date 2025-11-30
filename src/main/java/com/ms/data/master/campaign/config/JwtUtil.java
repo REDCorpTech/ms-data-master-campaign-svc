@@ -10,10 +10,8 @@ import java.util.Optional;
 public class JwtUtil {
 
     public String getBrandId(String token) {
-        return Optional.ofNullable(JWT.decode(token.startsWith("Bearer ") ? token.substring(7) : token)
-                        .getClaim("brandId")
-                        .asString())
-                .filter(brandId -> !brandId.trim().isEmpty())
-                .orElseThrow(() -> new RuntimeException("brandId claim not found in token"));
+        return JWT.decode(token.startsWith("Bearer ") ? token.substring(7) : token)
+                .getClaim("brandId")
+                .asString();
     }
 }

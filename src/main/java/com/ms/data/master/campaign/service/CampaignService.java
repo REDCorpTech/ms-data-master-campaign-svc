@@ -190,7 +190,7 @@ public class CampaignService {
             if (brandId != null) {
                 String nativeSql = "SELECT c.id FROM \"ms-data-master-campaign-svc\".t_campaign c " +
                         "WHERE EXISTS ( " +
-                        "    SELECT 1 FROM jsonb_array_elements(c.product_details_jsonb) AS prod " +
+                        "    SELECT 1 FROM jsonb_array_elements(c.product_details) AS prod " +
                         "    INNER JOIN public.\"ProductVariants\" p ON p.id = (prod->>'id') " +
                         "    WHERE p.\"brandId\" = ?1 " +
                         ")";
