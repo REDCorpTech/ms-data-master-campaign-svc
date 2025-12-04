@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerCouponRedeemerDTO {
-    private UUID id;
+    private String id;
     private String customerName;
     private String customerEmail;
     private LocalDate customerBirthOfDate;
