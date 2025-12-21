@@ -21,23 +21,30 @@ public class ClaimCalculationLib {
     private final CampaignScanLogRepository campaignScanLogRepository;
 
     public void processClaimForCustomer(String email) {
+
         List<CampaignScanSummaryProjection> scanSummary =
                 campaignScanLogRepository.findCampaignScanSummaryByEmail(email);
 
         for (CampaignScanSummaryProjection summary : scanSummary) {
+
             int allowedClaim = summary.getAllowedClaim();
-            if (allowedClaim > 0) {
-                List<CampaignScanLog> logsToClaim =
-                        campaignScanLogRepository.findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
-                                summary.getEmail(), summary.getProductId());
+            if (allowedClaim <= 0) continue;
 
-                logsToClaim.stream()
-                        .limit(allowedClaim)
-                        .forEach(log -> log.setIsClaim(true));
+            List<CampaignScanLog> logs =
+                    campaignScanLogRepository.findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
+                            summary.getEmail(),
+                            summary.getProductId()
+                    );
 
-                // Batch update sekali saja
-                campaignScanLogRepository.saveAll(logsToClaim);
-            }
+            // ambil hanya N yang boleh di-claim
+            List<CampaignScanLog> logsToClaim = logs.stream()
+                    .limit(allowedClaim)
+                    .toList();
+
+            logsToClaim.forEach(log -> log.setIsClaim(true));
+
+            // ⬅️ PENTING: save hanya yang di-claim
+            campaignScanLogRepository.saveAll(logsToClaim);
         }
     }
 }
