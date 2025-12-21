@@ -38,7 +38,7 @@ public class ClaimCalculationLib {
                 logsToClaim.stream()
                         .limit(allowedClaim)
                         .forEach(log -> log.setIsClaim(true));
-
+                campaignScanLogRepository.saveAll(logsToClaim);
                 // Batch update
                 campaignScanLogRepository.saveAll(logsToClaim);
             }
