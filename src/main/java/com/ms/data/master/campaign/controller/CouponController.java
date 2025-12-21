@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequestMapping("${endpoint.coupon.base}")
 @RequiredArgsConstructor
 @Slf4j
-public class CouponController {
+public class    CouponController {
     private final CouponService couponService;
 
     @Value("${common.pageable.size}")
@@ -58,22 +58,22 @@ public class CouponController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CouponDTO> createCampaign(@RequestBody CouponDTO couponDTO) {
+    public ResponseEntity<CouponDTO> createCoupon(@RequestBody CouponDTO couponDTO) {
         return ResponseEntity.ok(couponService.createService(couponDTO));
     }
 
     @GetMapping(value = "${endpoint.coupon.get-by-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CouponDTO> getCampaignById(@PathVariable UUID id) {
+    public ResponseEntity<CouponDTO> getCouponById(@PathVariable UUID id) {
         return ResponseEntity.ok(couponService.getIdService(id));
     }
 
     @GetMapping(value = "${endpoint.coupon.get-by-coupon-status}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CouponDTO> getCampaignByOrderRequestStatus(@PathVariable String campaignStatus) {
+    public ResponseEntity<CouponDTO> getCouponByOrderRequestStatus(@PathVariable String campaignStatus) {
         return ResponseEntity.ok(couponService.getCampaignStatusService(campaignStatus));
     }
 
     @DeleteMapping(value = "${endpoint.coupon.delete}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteCampaign(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteCoupon(@PathVariable UUID id) {
         couponService.deleteService(id);
         return ResponseEntity.ok().build();
     }
