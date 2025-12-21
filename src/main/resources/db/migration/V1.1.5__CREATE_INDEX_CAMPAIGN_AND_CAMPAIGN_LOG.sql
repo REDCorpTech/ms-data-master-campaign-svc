@@ -8,3 +8,4 @@ CREATE INDEX idx_scan_log_product_details_gin
 
 CREATE INDEX idx_scan_log_email
     ON t_campaign_scan_log(email);
+
