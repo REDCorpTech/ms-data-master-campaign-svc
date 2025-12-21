@@ -53,7 +53,7 @@ public interface CampaignScanLogRepository extends JpaRepository<CampaignScanLog
     JOIN LATERAL jsonb_array_elements(sl.product_details) pd ON true
     WHERE sl.email = :email
       AND pd->>'id' = :productId
-      AND sl.is_claim = false
+      AND (sl.is_claim IS NULL OR sl.is_claim = false)
     ORDER BY sl.scan_at ASC
     """, nativeQuery = true)
     List<CampaignScanLog> findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
