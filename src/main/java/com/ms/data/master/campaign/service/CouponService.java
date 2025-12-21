@@ -1,5 +1,6 @@
 package com.ms.data.master.campaign.service;
 
+import com.ms.data.master.campaign.lib.ClaimCalculationLib;
 import com.ms.data.master.campaign.model.Campaign;
 import com.ms.data.master.campaign.model.Coupon;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignDTO;
@@ -21,10 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +32,7 @@ import java.util.stream.Collectors;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final ClaimCalculationLib claimCalculationLib;
     private final Random random = new Random();
 
     public PageResponse<CouponDTO> getAllService(Integer pageableSize, Integer pageablePage, Sort sorting,
@@ -61,10 +60,23 @@ public class CouponService {
 
     @Transactional
     public CouponDTO createService(CouponDTO couponDTO) {
-        if (couponDTO.getCouponCode() == null || couponDTO.getCouponCode().isBlank())
-            couponDTO.setCouponCode(generateUniqueCouponCode());
-        return CouponMapper.INSTANCE.toDTO(couponRepository.save(CouponMapper.INSTANCE.toEntity(couponDTO)));
+        return CouponMapper.INSTANCE.toDTO(
+                Optional.of(couponRepository.save(CouponMapper.INSTANCE.toEntity(
+                                Optional.of(couponDTO)
+                                        .filter(dto -> dto.getCouponCode() != null && !dto.getCouponCode().isBlank())
+                                        .orElseGet(() -> {
+                                            couponDTO.setCouponCode(generateUniqueCouponCode());
+                                            return couponDTO;
+                                        })
+                        )))
+                        .map(saved -> {
+                            claimCalculationLib.processClaimForCustomer(couponDTO.getCustomerCouponRedeemerDetails().getCustomerEmail());
+                            return saved;
+                        })
+                        .get()
+        );
     }
+
 
 
 
@@ -112,6 +124,8 @@ public class CouponService {
         }
         return sb.toString();
     }
+
+
 
 
     private Specification<Coupon> buildSpecification(
@@ -167,8 +181,8 @@ public class CouponService {
     }
 
     //
-// 🔧 Helper methods — add these inside your CampaignService
-//
+    // 🔧 Helper methods — add these inside your CampaignService
+    //
     private <T> void addIfNotNull(List<Predicate> predicates, CriteriaBuilder cb, Path<T> path, T value) {
         if (value != null) {
             predicates.add(cb.equal(path, value));

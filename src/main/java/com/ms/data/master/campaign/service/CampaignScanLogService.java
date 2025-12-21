@@ -2,6 +2,7 @@ package com.ms.data.master.campaign.service;
 
 import com.ms.data.master.campaign.model.CampaignScanLog;
 import com.ms.data.master.campaign.model.dto.campaign.CampaignScanLogDTO;
+import com.ms.data.master.campaign.model.dto.campaign.CampaignScanSummaryProjection;
 import com.ms.data.master.campaign.model.dto.response.PageResponse;
 import com.ms.data.master.campaign.model.mapper.CampaignScanLogMapper;
 import com.ms.data.master.campaign.respository.CampaignScanLogRepository;
@@ -107,6 +108,9 @@ public class CampaignScanLogService {
     private Long countScanByEmailFromRepository(String email) {
         return campaignScanLogRepository.countByEmail(email);
     }
+
+
+
 
     private Specification<CampaignScanLog> buildSpecification(
             CampaignScanLogDTO campaignScanLogDTO,
