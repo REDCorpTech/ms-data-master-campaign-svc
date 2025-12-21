@@ -7,7 +7,7 @@ public interface CampaignScanSummaryProjection {
 
     String getProductName();
 
-    Long getTotalScan();
+    Integer getTotalScan();
 
     Integer getScanPerClaim();
 
