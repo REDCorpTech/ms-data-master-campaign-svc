@@ -47,9 +47,18 @@ public interface CampaignScanLogRepository extends JpaRepository<CampaignScanLog
             @Param("email") String email
     );
 
+    @Query(value = """
+    SELECT sl.*
+    FROM "ms-data-master-campaign-svc".t_campaign_scan_log sl
+    JOIN LATERAL jsonb_array_elements(sl.product_details) pd ON true
+    WHERE sl.email = :email
+      AND pd->>'id' = :productId
+      AND sl.is_claim = false
+    ORDER BY sl.scan_at ASC
+    """, nativeQuery = true)
     List<CampaignScanLog> findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
-            String email,
-            String productId
+            @Param("email") String email,
+            @Param("productId") String productId
     );
 
 
