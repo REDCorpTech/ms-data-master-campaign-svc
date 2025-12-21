@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,10 +62,19 @@ public class CampaignScanLogService {
     public CampaignScanLogDTO createService(CampaignScanLogDTO campaignScanLogDTO) {
         return CampaignScanLogMapper.INSTANCE.toDTO(
                 campaignScanLogRepository.save(
-                                CampaignScanLogMapper.INSTANCE.toEntity(campaignScanLogDTO)
+                        CampaignScanLogMapper.INSTANCE.toEntity(
+                                Optional.ofNullable(campaignScanLogDTO.getIsClaim())
+                                        .map(ic -> campaignScanLogDTO)
+                                        .orElseGet(() -> {
+                                            campaignScanLogDTO.setIsClaim(false);
+                                            return campaignScanLogDTO;
+                                        })
+                        )
                 )
         );
     }
+
+
 
     @Transactional
     public CampaignScanLogDTO updateService(UUID id, CampaignScanLogDTO campaignScanLogDTO) {
