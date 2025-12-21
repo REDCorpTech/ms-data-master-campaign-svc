@@ -20,31 +20,53 @@ public class ClaimCalculationLib {
 
     private final CampaignScanLogRepository campaignScanLogRepository;
 
+    @Transactional
     public void processClaimForCustomer(String email) {
 
-        List<CampaignScanSummaryProjection> scanSummary =
+        List<CampaignScanSummaryProjection> summaries =
                 campaignScanLogRepository.findCampaignScanSummaryByEmail(email);
 
-        for (CampaignScanSummaryProjection summary : scanSummary) {
+        for (CampaignScanSummaryProjection summary : summaries) {
 
-            int allowedClaim = summary.getAllowedClaim();
-            if (allowedClaim <= 0) continue;
+            int scanPerClaim = summary.getScanPerClaim();
 
-            List<CampaignScanLog> logs =
-                    campaignScanLogRepository.findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
-                            summary.getEmail(),
-                            summary.getProductId()
-                    );
+            while (true) {
 
-            // ambil hanya N yang boleh di-claim
-            List<CampaignScanLog> logsToClaim = logs.stream()
-                    .limit(allowedClaim)
-                    .toList();
+                int claimedScanCount =
+                        campaignScanLogRepository.countClaimedScan(
+                                summary.getEmail(),
+                                summary.getProductId()
+                        );
 
-            logsToClaim.forEach(log -> log.setIsClaim(true));
+                int totalScan = summary.getTotalScan();
 
-            // ⬅️ PENTING: save hanya yang di-claim
-            campaignScanLogRepository.saveAll(logsToClaim);
+                int allowedClaim = totalScan / scanPerClaim;
+                int usedClaim = claimedScanCount / scanPerClaim;
+
+                if (usedClaim >= allowedClaim) {
+                    break;
+                }
+
+                List<CampaignScanLog> unclaimedLogs =
+                        campaignScanLogRepository
+                                .findUnclaimedByEmailAndProductOrderByScanAtAsc(
+                                        summary.getEmail(),
+                                        summary.getProductId()
+                                );
+
+                if (unclaimedLogs.size() < scanPerClaim) {
+                    break;
+                }
+
+                unclaimedLogs.subList(0, scanPerClaim)
+                        .forEach(log -> log.setIsClaim(true));
+
+                campaignScanLogRepository.saveAll(
+                        unclaimedLogs.subList(0, scanPerClaim)
+                );
+            }
         }
     }
+
+
 }

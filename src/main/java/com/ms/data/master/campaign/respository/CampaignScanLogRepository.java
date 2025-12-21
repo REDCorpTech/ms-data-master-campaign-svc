@@ -47,6 +47,20 @@ public interface CampaignScanLogRepository extends JpaRepository<CampaignScanLog
             @Param("email") String email
     );
 
+        @Query(value = """
+        SELECT COUNT(*)
+        FROM "ms-data-master-campaign-svc".t_campaign_scan_log sl
+        JOIN LATERAL jsonb_array_elements(sl.product_details) pd ON true
+        WHERE sl.email = :email
+          AND pd->>'id' = :productId
+          AND sl.is_claim = true
+    """, nativeQuery = true)
+    int countClaimedScan(
+            @Param("email") String email,
+            @Param("productId") String productId
+    );
+
+
     @Query(value = """
     SELECT sl.*
     FROM "ms-data-master-campaign-svc".t_campaign_scan_log sl
@@ -56,7 +70,7 @@ public interface CampaignScanLogRepository extends JpaRepository<CampaignScanLog
       AND (sl.is_claim IS NULL OR sl.is_claim = false)
     ORDER BY sl.scan_at ASC
     """, nativeQuery = true)
-    List<CampaignScanLog> findAllByEmailAndProductIdAndIsClaimFalseOrderByScanAtAsc(
+    List<CampaignScanLog> findUnclaimedByEmailAndProductOrderByScanAtAsc(
             @Param("email") String email,
             @Param("productId") String productId
     );
