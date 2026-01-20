@@ -195,14 +195,16 @@ public class CampaignService {
                         "    WHERE p.\"brandId\" = ?1 " +
                         ")";
 
-                List<String> campaignIds = entityManager.createNativeQuery(nativeSql)
+                // Ambil hasil native query sebagai Object
+                List<Object> campaignIdsObj = entityManager.createNativeQuery(nativeSql)
                         .setParameter(1, brandId)
                         .getResultList();
 
-                if (!campaignIds.isEmpty()) {
-                    List<UUID> campaignUuidList = campaignIds.stream()
-                            .map(UUID::fromString)
-                            .toList(); // or .collect(Collectors.toList()) if < Java 17
+                if (!campaignIdsObj.isEmpty()) {
+                    // Convert Object -> String -> UUID
+                    List<UUID> campaignUuidList = campaignIdsObj.stream()
+                            .map(obj -> UUID.fromString(obj.toString()))
+                            .toList(); // Java 17+
                     predicates.add(root.get("id").in(campaignUuidList));
                 } else {
                     // Instead of comparing UUID with empty string, use a condition that matches nothing
