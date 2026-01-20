@@ -200,10 +200,13 @@ public class CampaignService {
                         .getResultList();
 
                 if (!campaignIds.isEmpty()) {
-                    predicates.add(root.get("id").in(campaignIds));
+                    List<UUID> campaignUuidList = campaignIds.stream()
+                            .map(UUID::fromString)
+                            .toList(); // or .collect(Collectors.toList()) if < Java 17
+                    predicates.add(root.get("id").in(campaignUuidList));
                 } else {
-                    // Return empty result if no campaigns match the brand
-                    predicates.add(cb.equal(root.get("id"), ""));
+                    // Instead of comparing UUID with empty string, use a condition that matches nothing
+                    predicates.add(cb.disjunction()); // always false predicate
                 }
             }
 
